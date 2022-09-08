@@ -1,0 +1,19 @@
+{
+  "name": "srtb-visualizer",
+  "version": "1.0.0",
+  "description": "Visualizes a SpinRhythm XD srtb file",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpinShare/srtb-visualizer.git"
+  },
+  "author": "Laura Heimann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SpinShare/srtb-visualizer/issues"
+  },
+  "homepage": "https://github.com/SpinShare/srtb-visualizer#readme"
+}
