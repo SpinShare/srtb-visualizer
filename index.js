@@ -5,6 +5,18 @@ class SRTBVisualizer {
 
         this.loadSRTB(srtbContent);
         this.initCanvas();
+
+        if(this.options.controls) {
+            this.controls = {
+                container: null,
+                scrollContainer: null,
+                scrollBar: null,
+                zoomContainer: null,
+                zoomInButton: null,
+                zoomOutButton: null,
+                zoomLabel: null,
+            };
+        }
     }
 
     initCanvas() {
@@ -32,23 +44,66 @@ class SRTBVisualizer {
         container.appendChild(this.canvas);
 
         if(this.options.controls) {
-            let controls = document.createElement('div');
-            controls.style.display = 'flex';
-            controls.style.flexDirection = 'row';
-            controls.style.justifyContent = 'space-between';
-            controls.style.alignItems = 'center';
-            controls.style.marginTop = '10px';
+            this.controls.container = document.createElement('div');
+            this.controls.container.style.display = 'grid';
+            this.controls.container.style.gridTemplateColumns = '1fr auto';
+            this.controls.container.style.gridGap = '15px';
 
-            let zoomInButton = document.createElement('button');
-            zoomInButton.innerText = '+';
-            zoomInButton.style.width = '40px';
-            zoomInButton.style.height = '40px';
-            zoomInButton.style.borderRadius = '5px';
-            zoomInButton.style.border = 'none';
-            zoomInButton.style.backgroundColor = this.theme.backgroundColor;
-            zoomInButton.style.color = this.theme.textColor;
+            this.controls.scrollContainer = document.createElement('div');
+            this.controls.scrollContainer.style.display = 'flex';
+            this.controls.scrollContainer.style.alignItems = 'center';
 
-            container.appendChild(controls);
+            this.controls.scrollBar = document.createElement('input');
+            this.controls.scrollBar.type = 'range';
+            this.controls.scrollBar.min = 0;
+            this.controls.scrollBar.max = this.srtb.currentTrackData.notes[this.srtb.currentTrackData.notes.length - 1].time;
+            this.controls.scrollBar.value = 0;
+            this.controls.scrollBar.style.width = '100%';
+            this.controls.scrollBar.addEventListener('input', () => {
+                this.options.offset = this.controls.scrollBar.value;
+                this.render();
+            });
+
+
+            // ZOOM CONTROLS
+            this.controls.zoomContainer = document.createElement('div');
+            this.controls.zoomContainer.style.display = 'flex';
+            this.controls.zoomContainer.style.flexDirection = 'row';
+            this.controls.zoomContainer.style.alignItems = 'center';
+
+            this.controls.zoomInButton = document.createElement('button');
+            this.controls.zoomInButton.innerText = '+';
+            this.controls.zoomInButton.style.padding = "10px 20px";
+            this.controls.zoomInButton.addEventListener('click', () => {
+                this.options.zoom += 0.5;
+                this.render();
+            });
+
+            this.controls.zoomOutButton = document.createElement('button');
+            this.controls.zoomOutButton.innerText = '-';
+            this.controls.zoomOutButton.style.padding = "10px 20px";
+            this.controls.zoomOutButton.addEventListener('click', () => {
+                if(this.options.zoom > 0.5) {
+                    this.options.zoom -= 0.5;
+                    this.render();
+                }
+            });
+
+            this.controls.zoomLabel = document.createElement('div');
+            this.controls.zoomLabel.style.padding = "0px 20px";
+
+            this.controls.scrollContainer.appendChild(this.controls.scrollBar);
+
+            this.controls.zoomContainer.appendChild(this.controls.zoomInButton);
+            this.controls.zoomContainer.appendChild(this.controls.zoomLabel);
+            this.controls.zoomContainer.appendChild(this.controls.zoomOutButton);
+
+            this.controls.container.appendChild(this.controls.scrollContainer);
+            this.controls.container.appendChild(this.controls.zoomContainer);
+
+            this.renderControls();
+
+            container.appendChild(this.controls.container);
         }
 
         return container;
@@ -63,6 +118,10 @@ class SRTBVisualizer {
         this.renderBars();
         this.renderNotes();
         this.renderFooterBar();
+        
+        if(this.options.controls) {
+            this.renderControls();
+        }
     }
 
     renderTitleBar() {
@@ -141,6 +200,10 @@ class SRTBVisualizer {
         this.canvasContext.fillText("Notes: " + this.srtb.currentTrackData.notes.length, 100, this.options.height - 10);
     }
 
+    renderControls() {
+        this.controls.zoomLabel.innerText = 'Zoom: ' + this.options.zoom * 100 + '%';
+    }
+
     renderBars() {
         for(let i = 1; (i * 40 * this.options.zoom) < this.options.width; i++) {
             this.drawLine((i * 40 * this.options.zoom) - this.options.offset, 60, (i * 40 * this.options.zoom) - this.options.offset + 1, this.options.height - 30, this.theme.lineColor);
@@ -169,12 +232,12 @@ class SRTBVisualizer {
 
     drawBeatNote(time, lane, colorIndex) {
         this.canvasContext.fillStyle = colorIndex === 0 ? 'crimson' : 'dodgerblue';
-        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 10, 170 + lane * 30, 20, 20);
+        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 10, 180 + lane * 30, 20, 20);
     }
 
     drawMatchNote(time, lane, colorIndex) {
         this.canvasContext.fillStyle = colorIndex === 0 ? 'crimson' : 'dodgerblue';
-        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 5, 170 + lane * 30 + 5, 10, 10);
+        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 5, 180 + lane * 30 + 5, 10, 10);
     }
 
     setOptions(options) {
