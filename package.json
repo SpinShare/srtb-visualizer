@@ -4,7 +4,7 @@
   "description": "Visualizes a SpinRhythm XD srtb file",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "demo": "http-server -p 8000"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/SpinShare/srtb-visualizer/issues"
   },
-  "homepage": "https://github.com/SpinShare/srtb-visualizer#readme"
+  "homepage": "https://github.com/SpinShare/srtb-visualizer#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
 }

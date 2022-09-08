@@ -1,0 +1,27 @@
+html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: Verdana;
+    font-size: 14px;
+    line-height: 1.5em;
+    background: #fff;
+    color: #333;
+    padding: 50px;
+}
+.wrapper {
+    width: 90%;
+    margin: 0 auto;
+    max-width: 1140px;
+}
+h2 {
+    font-weight: 400;
+}
+.demo {
+    display: flex;
+    justify-content: center;
+}

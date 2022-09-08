@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>srtb-visualizer demo</title>
+
+    <link rel="stylesheet" href="demo.css" />
+</head>
+<body>
+    <div class="wrapper">
+        <h1>srtb-visualizer demo</h1>
+        <section>
+            <h2>Basic usage</h2>
+            <h3>Code</h3>
+            <code>
+                <pre>
+const visualizer = new SRTBVisualizer(srtbJson, {
+    difficulty: RatingDifficulty.EASY,
+});
+
+let container = document.querySelector("#container");
+container.appendChild(visualizer.getCanvas());
+visualizer.render();
+                </pre>
+            </code>
+
+            <h3>Demo</h3>
+            <div class="demo" id="basic-usage-example"></div>
+        </section>
+        <section>
+            <h2>With controls</h2>
+            <h3>Code</h3>
+            <code>
+                <pre>
+const visualizer = new SRTBVisualizer(srtbJson, {
+    difficulty: RatingDifficulty.EASY,
+    controls: true,
+});
+
+let container = document.querySelector("#container");
+container.appendChild(visualizer.getCanvas());
+visualizer.render();
+                </pre>
+            </code>
+
+            <h3>Demo</h3>
+            <div class="demo" id="with-controls-example"></div>
+        </section>
+    </div>
+
+    <script src="../index.js"></script>
+    <script>
+        fetch('griztronics.srtb').then((response) => {
+            return response.json();
+        }).then((json) => {
+            // Basic Usage
+            const basicVisualizer = new SRTBVisualizer(json, {
+                difficulty: RatingDifficulty.XD,
+                zoom: 2,
+            });
+
+            let basicUsageExampleElement = document.querySelector("#basic-usage-example");
+            basicUsageExampleElement.appendChild(basicVisualizer.getElement());
+            basicVisualizer.render();
+
+            // With Controls
+            const withControlsVisualizer = new SRTBVisualizer(json, {
+                difficulty: RatingDifficulty.XD,
+                zoom: 2,
+                controls: true,
+            });
+
+            let withControlsExampleElement = document.querySelector("#with-controls-example");
+            withControlsExampleElement.appendChild(withControlsVisualizer.getElement());
+            withControlsVisualizer.render();
+        });
+    </script>
+</body>
+</html>
