@@ -1,4 +1,22 @@
 class SRTBVisualizer {
+    static NoteColor = {
+        BLUE: 0,
+        RED: 1
+    };
+    
+    static NoteType = {
+        MATCH: 0,
+        BEAT: 1,
+        SPINRIGHT: 2,
+        SPINLEFT: 3,
+        HOLD: 4,
+        HOLDPOINT: 5,
+        TAP: 8,
+        EXPERIMENTAL: 10,
+        BEATRELEASE: 11,
+        SCRATCH: 12
+    };
+
     constructor(srtbContent, options) {
         this.srtbContent = srtbContent;
         this.setOptions(options ?? {});
@@ -214,10 +232,33 @@ class SRTBVisualizer {
         console.log("Rendering difficulty: " + this.options.difficulty);
 
         this.srtb.currentTrackData.notes.forEach(note => {
-            if(note.type === 0) {
-                this.drawBeatNote(note.time, note.column, note.colorIndex);
-            } else {
-                this.drawMatchNote(note.time, note.column, note.colorIndex);
+            switch(note.type) {
+                default:
+                    break;
+                case SRTBVisualizer.NoteType.BEAT:
+                    this.drawBeatNote(note.time);
+                    break;
+                case SRTBVisualizer.NoteType.MATCH:
+                    this.drawMatchNote(note.time, note.column, note.colorIndex);
+                    break;
+                case SRTBVisualizer.NoteType.SPINRIGHT:
+                    break;
+                case SRTBVisualizer.NoteType.SPINLEFT:
+                    break;
+                case SRTBVisualizer.NoteType.HOLD:
+                    break;
+                case SRTBVisualizer.NoteType.HOLDPOINT:
+                    break;
+                case SRTBVisualizer.NoteType.TAP:
+                    this.drawTapNote(note.time, note.column, note.colorIndex);
+                    break;
+                case SRTBVisualizer.NoteType.EXPERIMENTAL:
+                    break;
+                case SRTBVisualizer.NoteType.BEATRELEASE:
+                    break;
+                case SRTBVisualizer.NoteType.SCRATCH:
+                    break;
+
             }
         });
     }
@@ -230,14 +271,19 @@ class SRTBVisualizer {
         this.canvasContext.stroke();
     }
 
-    drawBeatNote(time, lane, colorIndex) {
-        this.canvasContext.fillStyle = colorIndex === 0 ? 'crimson' : 'dodgerblue';
-        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 10, 180 + lane * 30, 20, 20);
+    drawMatchNote(time, lane, colorIndex) {
+        this.canvasContext.fillStyle = SRTBVisualizer.getNoteColor(colorIndex);
+        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 5, 180 + lane * 30 + 5, 10, 10);
     }
 
-    drawMatchNote(time, lane, colorIndex) {
-        this.canvasContext.fillStyle = colorIndex === 0 ? 'crimson' : 'dodgerblue';
-        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 5, 180 + lane * 30 + 5, 10, 10);
+    drawBeatNote(time) {
+        this.canvasContext.fillStyle = 'lightgreen';
+        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 1, 90, 2, 200);
+    }
+
+    drawTapNote(time, lane, colorIndex) {
+        this.canvasContext.fillStyle = SRTBVisualizer.getNoteColor(colorIndex);
+        this.canvasContext.fillRect(((time - this.options.offset) * 40 * this.options.zoom) - 10, 180 + lane * 30, 20, 20);
     }
 
     setOptions(options) {
@@ -329,6 +375,15 @@ class SRTBVisualizer {
     loadValues(jsonKey) {
         const valueContainer = this.srtbContent.largeStringValuesContainer.values.find(valueContainer => valueContainer.key === jsonKey);
         return JSON.parse(valueContainer.val);
+    }
+
+    static getNoteColor(noteColor) {
+        switch(noteColor) {
+            case SRTBVisualizer.NoteColor.BLUE:
+                return 'dodgerblue';
+            case SRTBVisualizer.NoteColor.RED:
+                return 'crimson';
+        }
     }
 }
 
